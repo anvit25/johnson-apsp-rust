@@ -2,10 +2,14 @@ use std::fs;
 use std::time::SystemTime;
 use std::io::Write;
 use johnson::adj_list::{Edge, Graph, dijkstra, bellman_ford};
+use std::env;
 
 fn main() {
+	let args: Vec<String> = env::args().collect();
+	let (input, output) = getinputoutput(&args);
+
 	//Reading the file and converting to a list of list of numbers
-	let contents: Vec<_> = fs::read_to_string("input.txt")
+	let contents: Vec<_> = fs::read_to_string(input)
 		.expect("Error Reading file")
 		.lines().map(read_nums).collect();
 
@@ -43,7 +47,7 @@ fn main() {
 				.collect::<Vec<String>>()
 				.join(&"\n");
 
-	let mut file = fs::File::create("output.csv")
+	let mut file = fs::File::create(output)
 					.expect("Error opening File");
 	file.write_all(out.as_bytes()).expect("Error Writing");
 }
@@ -90,4 +94,12 @@ fn read_nums(s: &str) -> Vec<i32> {
 fn write_num(s: &i32) -> String {
 	if s == &i32::MAX {return "inf".to_string();}
 	s.to_string()
+}
+
+fn getinputoutput(s: &Vec<String>) -> (&str, &str) {
+	match s.len() {
+		x if x > 2 => (&s[1], &s[2]),
+		2 => (&s[1], "output.csv"),
+		_ => ("input.txt", "output.csv")
+	}
 }
